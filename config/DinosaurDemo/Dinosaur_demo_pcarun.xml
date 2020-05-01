@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<Scene version="1.0" type = "FEMscene">
+	<LoboScene>
+		<TriMesh name="floor" uniform = "false">
+			<Path>./models/floor_wood.obj</Path>
+			<Position>0.0 0.0 -1.0</Position>
+			<Collision static="true"></Collision>
+		</TriMesh>
+		<TriMesh name="dragon" uniform = "true" smooth="false">
+			<Path>./models/dinosaur/dinosaurlow3.obj</Path>
+			<Position>0.0 0.5 0.0</Position>
+			<Collision static="false"></Collision>
+		</TriMesh>
+		
+	</LoboScene>
+
+	<LoboDynamicScene>
+		<SceneFolder>./demo/Siggraph2020/dinosaur/</SceneFolder>
+
+		<BindTetMesh UseBinary="true" tetgen="true" loadmesh="false" savemesh="false" tetgen_comd="p">
+			<TrimeshId>1</TrimeshId>
+			<!-- the tet files will be saved as <SceneFolder>/<TetFileBase> -->
+			<TetFileBase>tetmesh/tet</TetFileBase>
+		</BindTetMesh>
+
+		<DynamicSimulator type="ReducedSimulator" name ="fullspace" precompute="true">
+			<!-- the output will be saved in folder <SceneDataFolder>/<DataFolder> -->
+			<SolverFolder>solveroutput/</SolverFolder>
+
+
+			<AEAutoDiffModel path="NN/decoder.txt" min="-1.087483946502628" scale="2.0339405709711444"></AEAutoDiffModel>
+
+			<KineticModel>
+			<phi_path>Subspace/pca.data</phi_path>
+			</KineticModel>
+
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<HyperelasticModel invertible="true" useMCSFD="false" trigger="true">
+				<Material type="NeoHookean">
+					<YoungsModulus value = "500.0"></YoungsModulus>
+					<PossionRatio value = "0.3"></PossionRatio>
+					<Density value = "100.0"></Density>
+				</Material>
+			</HyperelasticModel>
+
+			<ConstraintModel weight ="10000.0" trigger="true">
+				<ConstraintsFile>constraints/constrainedDoFs.txt</ConstraintsFile>
+			</ConstraintModel>
+
+			<CollisionModel weight="0.0" friction="1.0" trigger="false">
+			</CollisionModel>
+
+			<TimeIntegration method="ImplicitDense" timestep="0.01" damping="1.0" skipsteps="1" recordq="false">
+				<Optimization method="newton" maxiter="20" tol="0.001"></Optimization>
+			</TimeIntegration>
+
+		</DynamicSimulator>
+
+	</LoboDynamicScene>
+
+
+
+</Scene>

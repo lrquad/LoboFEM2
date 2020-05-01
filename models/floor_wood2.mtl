@@ -1,0 +1,17 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl None
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+map_Ka ./models/dirt/Ground_Dirt_006_COLOR.jpg
+map_Kd ./models/dirt/Ground_Dirt_006_COLOR.jpg
+norm ./models/dirt/Ground_Dirt_006_NORM.jpg
+map_Pr ./models/dirt/Wood_planks_012_roughness.jpg
+map_bump ./models/dirt/Ground_Dirt_006_DISPa.png
+Ni 1.450000
+d 1.000000
+illum 2

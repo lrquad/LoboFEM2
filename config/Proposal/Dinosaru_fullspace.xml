@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Scene version="1.0" type = "FEMscene">
+	<LoboScene>
+		<TriMesh name="floor" uniform = "false">
+			<Path>./models/floor_wood.obj</Path>
+			<Position>0.0 0.0 -1.0</Position>
+			<Collision static="true"></Collision>
+		</TriMesh>
+		<TriMesh name="dragon" uniform = "true" smooth="false">
+			<Path>./models/dinosaur/dinosaurlow3.obj</Path>
+			<Position>0.0 1.2 0.0</Position>
+			<Scale>3.0 3.0 3.0</Scale>
+			<Collision static="false"></Collision>
+		</TriMesh>
+	</LoboScene>
+
+	<LoboDynamicScene>
+		<SceneFolder>./demo/Siggraph2020/dinosaur_proposal/</SceneFolder>
+		<BindTetMesh UseBinary="true" tetgen="true" loadmesh="false" savemesh="false" tetgen_comd="p">
+			<TrimeshId>1</TrimeshId>
+			<!-- the tet files will be saved as <SceneFolder>/<TetFileBase> -->
+			<TetFileBase>tetmesh/tet</TetFileBase>
+		</BindTetMesh>
+
+		<DynamicSimulator type="fullspace" name ="fullspace" precompute="true">
+			<!-- the output will be saved in folder <SceneDataFolder>/<DataFolder> -->
+			<SolverFolder>solveroutput/</SolverFolder>
+
+			<KineticModel>
+			</KineticModel>
+
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<HyperelasticModel invertible="true" useMCSFD="false" trigger="true">
+				<Material type="NeoHookean">
+					<YoungsModulus value = "2000.0"></YoungsModulus>
+					<PossionRatio value = "0.3"></PossionRatio>
+					<Density value = "1.0"></Density>
+				</Material>
+			</HyperelasticModel>
+
+			<ConstraintModel weight ="1000.0" trigger="true">
+				<ConstraintsFile>constraints/constrainedDoFs.txt</ConstraintsFile>
+			</ConstraintModel>
+
+			<CollisionModel weight="5.0" friction="1.0" trigger="false">
+			</CollisionModel>
+
+			<TimeIntegration method="ImplicitSparse" timestep="0.01" damping="0.9995" skipsteps="1" recordq="false">
+				<Optimization method="newton" maxiter="10" tol="0.001"></Optimization>
+			</TimeIntegration>
+
+		</DynamicSimulator>
+
+	</LoboDynamicScene>
+
+
+
+</Scene>

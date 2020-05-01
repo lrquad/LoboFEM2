@@ -1,0 +1,14 @@
+newmtl alduin:Material
+Ns 50.781250
+illum 2
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+map_Ka ./models/alduin/alduin.jpg
+map_Kd ./models/alduin/alduin.jpg
+norm ./models/alduin/alduin_n.jpg
+
+newmtl alduin:Material_1
+Ns 50.781250
+illum 2
+Ka 0.0 0.0 0.0
+Kd 0.800000 0.100000 0.100000

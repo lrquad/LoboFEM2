@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl None
+Ns 500
+Ka 0.0 0.0 0.0
+Kd 0.8 0.8 0.8
+Ks 1.0 1.0 1.0
+map_Ka ./models/wood2/Wood_014_COLOR.jpg
+map_Kd ./models/wood2/Wood_014_COLOR.jpg
+norm ./models/wood2/Wood_014_NORM.jpg
+d 1
+illum 2

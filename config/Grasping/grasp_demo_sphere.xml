@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<Scene version="1.0" type = "FEMscene">
+	<LoboScene>
+		<TriMesh name="floor" uniform = "false">
+			<Path>./models/floor_wood.obj</Path>
+			<Position>0.0 -0.15 -1.0</Position>
+			<Collision static="true"></Collision>
+		</TriMesh>
+		<TriMesh name="spherelow" uniform = "true" smooth="false">
+			<Path>./models/spherelow.obj</Path>
+			<Position>0.0 0.05 0.0</Position>
+			<Scale>0.4 0.4 0.4</Scale>
+			<Collision static="false"></Collision>
+		</TriMesh>
+		<TriMesh name="cube" uniform = "true" smooth="false" visible = "false">
+			<Path>./models/spherelow.obj</Path>
+			<Position>0.0 0.0 0.0</Position>
+			<!-- <Collision static="false"></Collision> -->
+			<Scale>0.05 0.05 0.05</Scale>
+		</TriMesh>
+		<TriMesh name="cube" uniform = "true" smooth="false">
+			<Path>./models/spherelow.obj</Path>
+			<Position>0.0 0.0 0.0</Position>
+			<!-- <Collision static="false"></Collision> -->
+			<Scale>0.05 0.05 0.05</Scale>
+		</TriMesh>
+		<TriMesh name="cube" uniform = "true" smooth="false">
+			<Path>./models/spherelow.obj</Path>
+			<Position>0.0 0.0 0.0</Position>
+			<!-- <Collision static="false"></Collision> -->
+			<Scale>0.05 0.05 0.05</Scale>
+		</TriMesh>
+		<TriMesh name="bar" uniform = "false" smooth="true">
+			<Path>./models/shape/cylinder.obj</Path>
+			<Position>0.0 0.0 0.5</Position>
+			<Scale>0.5 0.5 0.5</Scale>
+			<Collision static="truk"></Collision>
+		</TriMesh>
+
+	</LoboScene>
+
+	<LoboDynamicScene>
+		<SceneFolder>./demo/Siggraph2020/bunny/</SceneFolder>
+
+		<BindTetMesh UseBinary="true" tetgen="true" loadmesh="false" savemesh="false" tetgen_comd="p">
+			<TrimeshId>1</TrimeshId>
+			<!-- the tet files will be saved as <SceneFolder>/<TetFileBase> -->
+			<TetFileBase>tetmesh/bunny</TetFileBase>
+		</BindTetMesh>
+
+		<DynamicSimulator type="GraspSimulator" name ="GraspSimulator" precompute="true">
+			<!-- the output will be saved in folder <SceneDataFolder>/<DataFolder> -->
+			<SolverFolder>solveroutput/bunny_grasp/</SolverFolder>
+
+			<KineticModel>
+			</KineticModel>
+
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<HyperelasticModel invertible="true" useMCSFD="false" trigger="true">
+				<Material type="NeoHookean">
+					<YoungsModulus value = "200000.0"></YoungsModulus>
+					<PossionRatio value = "0.4"></PossionRatio>
+					<Density value = "10000.0"></Density>
+				</Material>
+			</HyperelasticModel>
+
+			<ConstraintModel weight ="1000.0" trigger="false">
+				<ConstraintsFile>constraints/constrainedDoFs.txt</ConstraintsFile>
+			</ConstraintModel>
+
+			<CollisionModel weight="10000.0" friction="2000.0" trigger="true">
+			</CollisionModel>
+
+			<TimeIntegration method="ImplicitSparse" timestep="0.01" damping="0.9995" skipsteps="3" recordq="false">
+				<Optimization method="newton" maxiter="20" tol="0.001"></Optimization>
+			</TimeIntegration>
+
+			<GraspModel weight="1000000.0" friction="0.0">
+				<Index triid = "2">45</Index>
+				<Index triid = "3">49</Index>
+				<Index triid = "4">43</Index>
+			</GraspModel>
+
+		</DynamicSimulator>
+
+		<!-- <DynamicSimulator type="GraspFingerSimulator" name ="ball1" precompute="true">
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<TrimeshId>2</TrimeshId>
+			<ContactPoints>2366</ContactPoints>
+		</DynamicSimulator>
+		<DynamicSimulator type="GraspFingerSimulator" name ="ball2" precompute="true">
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<TrimeshId>3</TrimeshId>
+			<ContactPoints>558</ContactPoints>
+		</DynamicSimulator>
+
+		<DynamicSimulator type="GraspFingerSimulator" name ="ball3" precompute="true">
+			<TargetTetMesh id="0"></TargetTetMesh>
+			<TrimeshId>4</TrimeshId>
+			<ContactPoints>547</ContactPoints>
+		</DynamicSimulator> -->
+
+	</LoboDynamicScene>
+
+
+
+</Scene>

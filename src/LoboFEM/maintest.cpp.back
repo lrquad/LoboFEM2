@@ -1,0 +1,75 @@
+#include "AutoDiff/LoboComplex.h"
+#include "AutoDiff/LoboComplexMatrix.h"
+#include <fstream>
+#include "Functions/PolarDecompostionComplex.h"
+
+LOBO_MAKE_TYPEDEFS(double, t);
+
+
+
+inline void polarText()
+{
+	double h = 1e-5;
+	h = 1e-30;
+	srand(0);
+	lobo::LoboComplexMatrix3<LoboComplext, double> A, Q, S,tmpMatrix, tmpMatrix2;
+	A.setRandom();
+	A = A.transpose()*A;
+	for (int i = 0;i < 9;i++)
+	{
+		A.data[i].image_ = 0;
+	}
+	A.data[0].image_ = h;
+
+	//my
+	for (int i = 0;i < 1;i++)
+	{
+		lobo::ComputePolarDecomposition<LoboComplext, double>(A.data.data(), Q.data.data(), S.data.data(), (double)1e-6);
+	}
+	std::cout << Q << std::endl;
+	std::cout << S << std::endl;
+
+	LoboComplext eigenvalues[3];
+	S.setZero();
+	for (int i = 0;i < 1;i++)
+	{
+		//LoboComplext test;
+		A.computeSVD_V(Q, &eigenvalues[0]);
+		//A.det();
+	}
+	
+	for (int j = 0;j < 3;j++)
+	{
+		S.data[j * 3 + j] = eigenvalues[j];
+	}
+
+	std::cout << S << std::endl;
+	lobo::multiMT(Q, S, tmpMatrix);
+	lobo::multiM(tmpMatrix, Q, tmpMatrix2);
+	Q = tmpMatrix2;
+	std::cout << Q << std::endl;
+	
+}
+
+int main(int argc, char *argv[])
+{
+    double h = 1e-5;
+
+	h = 1e-30;
+	LoboComplexDualt x;
+	x.real_.real_ = 0.01;
+	x.image_.real_ = h;
+	x.real_.image_ = h;
+	
+	LoboComplexDualt result_ = x*x;
+    std::cout<<result_<<std::endl;
+	
+	LoboComplext x_s;
+	x_s.real_ = 0.01;
+	x_s.image_ = h;
+	std::cout<<x_s*x_s<<std::endl;
+
+    //polarText();
+
+    return 0;
+}
