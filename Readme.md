@@ -1,5 +1,5 @@
 # LoboFEM
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/scene.png)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/scene.png)
 
 ## Todo
 
@@ -18,34 +18,34 @@
 
 Multi objects
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored2.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored2.gif)
 
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored3.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored3.gif)
 
 Constraint
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored4.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored4.gif)
 
 Collision (no friction force yet)
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored5.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored5.gif)
 
 Collision (friction force stiffnes 0.1)
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored6.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored6.gif)
 
 Collision (friction force stiffnes 1.0)
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/screen_recored7.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/screen_recored7.gif)
 
 Grasp (friction test failed)
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/sphere_grasp_failed.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/sphere_grasp_failed.gif)
 
 Grasp (stable, squeeze more)
 
-![scene](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/sphere_grasp.gif)
+![scene](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/sphere_grasp.gif)
 
 
 ## Install
@@ -77,7 +77,7 @@ If use ilp64, pardiso will give a long long int conversion error.
 
 
 ## Structure
-![Structure](https://github.com/lrquad/LoboFEMCmake/blob/master/demo/default/Images/LoboFEM.jpeg)
+![Structure](https://github.com/lrquad/LoboFEM2/blob/master/demo/default/Images/LoboFEM.jpeg)
 
 
 ## Note
