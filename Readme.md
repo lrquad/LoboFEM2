@@ -14,6 +14,7 @@
 - c++14 (for imfilebrowser)
 - hyperelastic material based FEM simulator
 - boost
+- Vega FEM
 
 
 Multi objects
@@ -68,6 +69,9 @@ If use ilp64, pardiso will give a long long int conversion error.
     git clone https://github.com/eigenteam/eigen-git-mirror.git
 
     cd ..
+
+    install boost
+    install mkl
 
     mkdir build
     cd build
