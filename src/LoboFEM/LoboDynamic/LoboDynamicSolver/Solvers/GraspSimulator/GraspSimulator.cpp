@@ -146,7 +146,18 @@ void Lobo::GraspSimulator::precompute() {
 }
 
 void Lobo::GraspSimulator::stepForward() {
+    
     graspmodel->setpForward(time_integraion->step);
+
+    if(graspmodel->stable_test == false)
+    {
+        this->parent_scene->setDone();
+    }
+
+    if(getCurStep()>this->max_simulation_steps)
+    {
+        this->parent_scene->setDone();
+    }
 
     kinetic_model->external_forces = kinetic_model->gravity_force;
     // kinetic_model->external_forces.setZero();
@@ -154,6 +165,7 @@ void Lobo::GraspSimulator::stepForward() {
     time_integraion->stepFoward();
 
     bind_tetMesh->updateTetVertices(&(time_integraion->q));
+
 }
 
 int Lobo::GraspSimulator::getCurStep() {

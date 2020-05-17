@@ -35,6 +35,15 @@ class GraspContactModel : public DynamicModel {
     double weight_stiffness;
     double friction_ratio;
     double radius;
+    double friction_coef;
+    bool stable_test;
+    
+     // for compute the conitnues sliding period
+    int longest_sliding_period;
+    int sliding_period_count;
+    int last_step_status;
+    
+
     Eigen::VectorXd q_1;
     Eigen::VectorXd q_vel_1;
 

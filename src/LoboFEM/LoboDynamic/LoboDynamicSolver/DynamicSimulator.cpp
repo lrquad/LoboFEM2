@@ -10,11 +10,11 @@ Lobo::DynamicSimulator::DynamicSimulator(LoboDynamicScene *parent_scene_)
     bind_tetMesh = NULL;
     target_tetmesh_id = -1;
     skipsteps = 1;
-    
+    max_simulation_steps = 1000;
 }
 
-Lobo::DynamicSimulator::~DynamicSimulator() {
-    
+Lobo::DynamicSimulator::~DynamicSimulator()
+{
 }
 
 void Lobo::DynamicSimulator::drawImGui()
@@ -32,9 +32,8 @@ void Lobo::DynamicSimulator::drawImGui()
     }
 }
 
-
 void Lobo::DynamicSimulator::setBindTetmeshFromScene(int tetmesh_id)
-{   
+{
     bind_tetMesh = this->parent_scene->tetmesh_in_scene[tetmesh_id];
 }
 
@@ -46,11 +45,12 @@ void Lobo::DynamicSimulator::runXMLscript(pugi::xml_node &solver_node)
         setBindTetmeshFromScene(target_tetmesh_id);
     }
 
-    
-
+    if (solver_node.attribute("max_simulation_steps"))
+    {
+        max_simulation_steps = solver_node.attribute("max_simulation_steps").as_int();
+    }
 }
 
 void Lobo::DynamicSimulator::precompute()
 {
-    
 }

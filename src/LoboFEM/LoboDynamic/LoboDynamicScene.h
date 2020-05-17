@@ -9,7 +9,8 @@ namespace Lobo {
 
 enum DynamicSceneFlag {
     dynamicsceneflag_stop = 1 << 0,
-    dynamicsceneflag_play = 1 << 1  // generted mesh by tetgen
+    dynamicsceneflag_play = 1 << 1,  // generted mesh by tetgen
+    dynamicsceneflag_done = 1 << 2
     };
 
 class LoboScene;
@@ -34,6 +35,9 @@ class LoboDynamicScene {
     virtual void stepForward();
     virtual void setPlay(){status_flags = dynamicsceneflag_play;};
     virtual void setStop(){status_flags = dynamicsceneflag_stop;};
+    virtual void setDone(){status_flags = dynamicsceneflag_done;};
+
+    virtual bool getDone(){return status_flags&dynamicsceneflag_done;};
 
     virtual int getStep();
     virtual int getSaveStep();
@@ -51,6 +55,7 @@ class LoboDynamicScene {
     
     std::vector<int> tetmesh_triId;
     LoboScene* scene;
+    int max_simulation_steps;
 
 protected:
     //system command check and mkdir folder we need
@@ -59,6 +64,7 @@ protected:
     void drawImGuiSolvers();
 
     int status_flags;
+
 };
 
 }  // namespace Lobo

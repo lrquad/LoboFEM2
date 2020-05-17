@@ -6,42 +6,61 @@
 
 Lobo::GraspContactModel::GraspContactModel(Lobo::LoboDynamicScene *scene_,
                                            Lobo::LoboTetMesh *tetmesh_)
-    : tetmesh(tetmesh_) {
+    : tetmesh(tetmesh_)
+{
     weight_stiffness = 1000.0;
     friction_ratio = 1.0;
     radius = 0.1;
     this->scene = scene_;
+
+    stable_test = true;
+
     net_contact_force.setZero();
+
+    last_step_status = 0;
+    longest_sliding_period = 0;
 }
 
 Lobo::GraspContactModel::~GraspContactModel() {}
 
-void Lobo::GraspContactModel::runXMLscript(pugi::xml_node &xml_node) {
+void Lobo::GraspContactModel::runXMLscript(pugi::xml_node &xml_node)
+{
     trimesh_list.clear();
     contact_points_list.clear();
     finger_list.clear();
 
-    for (pugi::xml_node index_node : xml_node.children("Index")) {
+    for (pugi::xml_node index_node : xml_node.children("Index"))
+    {
         int contact_point_index = index_node.text().as_int();
         contact_points_list.push_back(contact_point_index);
         finger_list.push_back(contact_point_index);
-        if (index_node.attribute("triid")) {
+        if (index_node.attribute("triid"))
+        {
             int tri_id = index_node.attribute("triid").as_int();
             trimesh_list.push_back(scene->scene->getMesh(tri_id));
         }
     }
 
-    if (xml_node.attribute("weight")) {
+    if (xml_node.attribute("weight"))
+    {
         weight_stiffness = xml_node.attribute("weight").as_double();
     }
 
-    if (xml_node.attribute("friction")) {
+    if (xml_node.attribute("friction"))
+    {
         friction_ratio = xml_node.attribute("friction").as_double();
     }
+
+    if (xml_node.attribute("friction_coef"))
+    {
+        friction_coef = xml_node.attribute("friction_coef").as_double();
+    }
+
     precompute();
 }
 
-void Lobo::GraspContactModel::precompute() {
+void Lobo::GraspContactModel::precompute()
+{
     contact_normal.clear();
     contact_center.clear();
     contact_pressure.clear();
@@ -50,32 +69,38 @@ void Lobo::GraspContactModel::precompute() {
     // add the neighbor points
     int num_sur_nodes = tetmesh->surface_vertice_map_inverse.size();
     std::vector<int> neighbor_points;
-    for (int i = 0; i < finger_list.size(); i++) {
+    for (int i = 0; i < finger_list.size(); i++)
+    {
         Eigen::Vector3d target_position =
             this->tetmesh->getNodeRestPosition(finger_list[i]);
-        for (int j = 0; j < num_sur_nodes; j++) {
+        for (int j = 0; j < num_sur_nodes; j++)
+        {
             int nodeid = tetmesh->surface_vertice_map_inverse[j];
             Eigen::Vector3d node_ori_p = tetmesh->getNodeRestPosition(nodeid);
             double distance = (node_ori_p - target_position).norm();
-            if (distance < 0.01 && nodeid != finger_list[i]) {
+            if (distance < 0.01 && nodeid != finger_list[i])
+            {
                 neighbor_points.push_back(nodeid);
             }
         }
     }
 
-    for (int i = 0; i < neighbor_points.size(); i++) {
+    for (int i = 0; i < neighbor_points.size(); i++)
+    {
         contact_points_list.push_back(neighbor_points[i]);
     }
 
     // update visual
-    for (int n = 0; n < finger_list.size(); n++) {
+    for (int n = 0; n < finger_list.size(); n++)
+    {
         Lobo::LoboMesh *trimesh = trimesh_list[n];
         int numtrinode = trimesh->attrib.vertices.size() / 3;
         Eigen::VectorXd buffer(numtrinode * 3);
         trimesh->getCurVertices(buffer.data());
         Eigen::Vector3d tri_mesh_center;
         tri_mesh_center.setZero();
-        for (int i = 0; i < numtrinode; i++) {
+        for (int i = 0; i < numtrinode; i++)
+        {
             tri_mesh_center.data()[0] += buffer.data()[i * 3 + 0];
             tri_mesh_center.data()[1] += buffer.data()[i * 3 + 1];
             tri_mesh_center.data()[2] += buffer.data()[i * 3 + 2];
@@ -87,7 +112,8 @@ void Lobo::GraspContactModel::precompute() {
             this->tetmesh->getNodeNormal(finger_list[n]);
         target_position += contact_normal_ * 0.0;
         Eigen::Vector3d translation_ = target_position - tri_mesh_center;
-        for (int i = 0; i < numtrinode; i++) {
+        for (int i = 0; i < numtrinode; i++)
+        {
             buffer.data()[i * 3 + 0] += translation_.data()[0];
             buffer.data()[i * 3 + 1] += translation_.data()[1];
             buffer.data()[i * 3 + 2] += translation_.data()[2];
@@ -95,7 +121,8 @@ void Lobo::GraspContactModel::precompute() {
         trimesh->updateVertices(buffer.data());
     }
 
-    for (int n = 0; n < contact_points_list.size(); n++) {
+    for (int n = 0; n < contact_points_list.size(); n++)
+    {
         // move to index
         Eigen::Vector3d target_position =
             this->tetmesh->getNodeRestPosition(contact_points_list[n]);
@@ -109,12 +136,14 @@ void Lobo::GraspContactModel::precompute() {
     }
 }
 
-void Lobo::GraspContactModel::paintGL(LoboShader *shader) {
+void Lobo::GraspContactModel::paintGL(LoboShader *shader)
+{
     glLineWidth(2.5);
     glColor3f(1.0, 0.0, 0.0);
     double force_scale = 100.0;
-    double friction_coef = 0.6;
-    for (int i = 0; i < contact_points_list.size(); i++) {
+
+    for (int i = 0; i < contact_points_list.size(); i++)
+    {
         int nodeid = contact_points_list[i];
         Eigen::Vector3d node_n = tetmesh->getNodeNormal(nodeid);
         Eigen::Vector3d node_p = tetmesh->getNodeCurPosition(nodeid);
@@ -142,7 +171,8 @@ void Lobo::GraspContactModel::paintGL(LoboShader *shader) {
 
         // check the condition
         if (contact_friction_force[i].norm() >
-            contact_pressure[i].norm() * friction_coef) {
+            contact_pressure[i].norm() * friction_coef)
+        {
             glColor3f(1.0, 0.0, 0.0);
             node_n = tetmesh->getNodeNormal(nodeid);
             glBegin(GL_LINES);
@@ -165,16 +195,22 @@ void Lobo::GraspContactModel::paintGL(LoboShader *shader) {
 void Lobo::GraspContactModel::computeEnergySparse(
 
     Eigen::VectorXd *free_variables, double *energy, Eigen::VectorXd *jacobi,
-    Eigen::SparseMatrix<double> *hessian, int computationflags) {
-    if (computationflags & Computeflags_reset) {
-        if (computationflags & Computeflags_energy) *energy = 0;
+    Eigen::SparseMatrix<double> *hessian, int computationflags)
+{
+    if (computationflags & Computeflags_reset)
+    {
+        if (computationflags & Computeflags_energy)
+            *energy = 0;
 
-        if (computationflags & Computeflags_fisrt) jacobi->setZero();
+        if (computationflags & Computeflags_fisrt)
+            jacobi->setZero();
 
-        if (computationflags & Computeflags_second) {
+        if (computationflags & Computeflags_second)
+        {
             for (int i = 0; i < hessian->outerSize(); ++i)
                 for (Eigen::SparseMatrix<double>::InnerIterator it(*hessian, i);
-                     it; ++it) {
+                     it; ++it)
+                {
                     it.valueRef() = 0;
                 }
         }
@@ -182,7 +218,8 @@ void Lobo::GraspContactModel::computeEnergySparse(
 
     // collision detect
     net_contact_force.setZero();
-    for (int i = 0; i < contact_points_list.size(); i++) {
+    for (int i = 0; i < contact_points_list.size(); i++)
+    {
         int nodeid = contact_points_list[i];
         Eigen::Vector3d node_position = tetmesh->getNodeRestPosition(nodeid);
         node_position.data()[0] += free_variables->data()[nodeid * 3 + 0];
@@ -190,21 +227,25 @@ void Lobo::GraspContactModel::computeEnergySparse(
         node_position.data()[2] += free_variables->data()[nodeid * 3 + 2];
         Eigen::Vector3d constrain_force;
         constrain_force.setZero();
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             int dof_id = nodeid * 3 + j;
             double loss = node_position.data()[j] - contact_center[i].data()[j];
 
             constrain_force.data()[j] = -2.0 * loss;
 
-            if (computationflags & Computeflags_energy) {
+            if (computationflags & Computeflags_energy)
+            {
                 *energy += weight_stiffness * loss * loss;
             }
 
-            if (computationflags & Computeflags_fisrt) {
+            if (computationflags & Computeflags_fisrt)
+            {
                 jacobi->data()[dof_id] += 2.0 * weight_stiffness * loss;
             }
 
-            if (computationflags & Computeflags_second) {
+            if (computationflags & Computeflags_second)
+            {
                 hessian->valuePtr()[diagonal_[dof_id]] +=
                     2.0 * weight_stiffness;
             }
@@ -218,7 +259,45 @@ void Lobo::GraspContactModel::computeEnergySparse(
     }
 }
 
-void Lobo::GraspContactModel::setpForward(int step) {
+void Lobo::GraspContactModel::setpForward(int step)
+{
+    //check if stable
+    bool sliding = false;
+    for (int i = 0; i < contact_points_list.size(); i++)
+    {
+        if (contact_friction_force[i].norm() >
+            contact_pressure[i].norm() * friction_coef)
+        {
+            sliding = true;
+        }
+    }
+    
+    if (sliding)
+    {
+        std::cout << " sliding" << std::endl;
+        if (last_step_status == 1)
+        {
+            sliding_period_count += 1;
+        }
+        last_step_status = 1;
+        if (sliding_period_count > longest_sliding_period)
+        {
+            longest_sliding_period = sliding_period_count;
+        }
+    }
+    else
+    {
+        sliding_period_count = 0;
+        sliding_period_count = 0;
+        last_step_status = 0;
+    }
+
+    if(longest_sliding_period>5)
+    {
+        //failed
+        stable_test = false;
+    }
+
     double speed = 0.002;
     int steps[4];
     steps[0] = 50;
@@ -228,33 +307,46 @@ void Lobo::GraspContactModel::setpForward(int step) {
     Eigen::Matrix3d m;
     m = Eigen::AngleAxisd(speed * 2.5, Eigen::Vector3d::UnitY());
 
-    for (int i = 0; i < contact_points_list.size(); i++) {
-        if (step < steps[0]) {
+    for (int i = 0; i < contact_points_list.size(); i++)
+    {
+        if (step < steps[0])
+        {
             contact_center[i].data()[0] += -contact_normal[i].data()[0] * speed;
             contact_center[i].data()[1] += -contact_normal[i].data()[1] * speed;
             contact_center[i].data()[2] += -contact_normal[i].data()[2] * speed;
-        } else if (step < steps[1]) {
+        }
+        else if (step < steps[1])
+        {
             contact_center[i].data()[1] += speed * 3.0;
-        } else if (step < steps[2]) {
+        }
+        else if (step < steps[2])
+        {
             contact_center[i] = m * contact_center[i];
-        } else if (step < steps[3]) {
+        }
+        else if (step < steps[3])
+        {
             contact_center[i].data()[2] += speed * 0.8;
-        } else {
+        }
+        else
+        {
             this->trigger = false;
             contact_pressure[i].setZero();
             contact_friction_force[i].setZero();
         }
     }
 
-    for (int i = 0; i < finger_list.size(); i++) {
+    for (int i = 0; i < finger_list.size(); i++)
+    {
         Lobo::LoboMesh *trimesh = trimesh_list[i];
         int numtrinode = trimesh->attrib.vertices.size() / 3;
         Eigen::VectorXd buffer(numtrinode * 3);
         buffer.setZero();
         trimesh->getCurVertices(buffer.data());
 
-        if (step < steps[0]) {
-            for (int j = 0; j < numtrinode; j++) {
+        if (step < steps[0])
+        {
+            for (int j = 0; j < numtrinode; j++)
+            {
                 buffer.data()[j * 3 + 0] +=
                     -contact_normal[i].data()[0] * speed;
                 buffer.data()[j * 3 + 1] +=
@@ -262,12 +354,18 @@ void Lobo::GraspContactModel::setpForward(int step) {
                 buffer.data()[j * 3 + 2] +=
                     -contact_normal[i].data()[2] * speed;
             }
-        } else if (step < steps[1]) {
-            for (int j = 0; j < numtrinode; j++) {
+        }
+        else if (step < steps[1])
+        {
+            for (int j = 0; j < numtrinode; j++)
+            {
                 buffer.data()[j * 3 + 1] += speed * 3.0;
             }
-        } else if (step < steps[2]) {
-            for (int j = 0; j < numtrinode; j++) {
+        }
+        else if (step < steps[2])
+        {
+            for (int j = 0; j < numtrinode; j++)
+            {
                 Eigen::Vector3d tmp;
                 tmp.data()[0] = buffer.data()[j * 3 + 0];
                 tmp.data()[1] = buffer.data()[j * 3 + 1];
@@ -277,13 +375,18 @@ void Lobo::GraspContactModel::setpForward(int step) {
                 buffer.data()[j * 3 + 1] = tmp.data()[1];
                 buffer.data()[j * 3 + 2] = tmp.data()[2];
             }
-
-        } else if (step < steps[3]) {
-            for (int j = 0; j < numtrinode; j++) {
+        }
+        else if (step < steps[3])
+        {
+            for (int j = 0; j < numtrinode; j++)
+            {
                 buffer.data()[j * 3 + 2] += speed * 0.8;
             }
-        } else {
-            for (int j = 0; j < numtrinode; j++) {
+        }
+        else
+        {
+            for (int j = 0; j < numtrinode; j++)
+            {
                 buffer.data()[j * 3 + 1] = 100;
             }
         }

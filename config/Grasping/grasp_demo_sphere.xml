@@ -48,7 +48,7 @@
 			<TetFileBase>tetmesh/bunny</TetFileBase>
 		</BindTetMesh>
 
-		<DynamicSimulator type="GraspSimulator" name ="GraspSimulator" precompute="true">
+		<DynamicSimulator type="GraspSimulator" name ="GraspSimulator" precompute="true" max_simulation_steps="1000">
 			<!-- the output will be saved in folder <SceneDataFolder>/<DataFolder> -->
 			<SolverFolder>solveroutput/bunny_grasp/</SolverFolder>
 
@@ -60,7 +60,7 @@
 				<Material type="NeoHookean">
 					<YoungsModulus value = "200000.0"></YoungsModulus>
 					<PossionRatio value = "0.4"></PossionRatio>
-					<Density value = "10000.0"></Density>
+					<Density value = "1000.0"></Density>
 				</Material>
 			</HyperelasticModel>
 
@@ -75,7 +75,7 @@
 				<Optimization method="newton" maxiter="20" tol="0.001"></Optimization>
 			</TimeIntegration>
 
-			<GraspModel weight="1000000.0" friction="0.0">
+			<GraspModel weight="1000000.0" friction="0.0" friction_coef="0.6">
 				<Index triid = "2">45</Index>
 				<Index triid = "3">49</Index>
 				<Index triid = "4">43</Index>

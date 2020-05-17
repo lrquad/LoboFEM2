@@ -22,6 +22,7 @@ std::string Lobo::getPath(const char *filename) {
 Lobo::LoboDynamicScene::LoboDynamicScene(Lobo::LoboScene *scene_)
     : scene(scene_) {
     status_flags = 0;
+    
 }
 
 Lobo::LoboDynamicScene::~LoboDynamicScene() {
@@ -30,10 +31,13 @@ Lobo::LoboDynamicScene::~LoboDynamicScene() {
 }
 
 void Lobo::LoboDynamicScene::runXMLscript(pugi::xml_node &scene_node) {
+
     deleteStdvectorPointer(tetmesh_in_scene);
+    
     if (scene_node.child("SceneFolder")) {
         demo_path = scene_node.child("SceneFolder").text().as_string();
     }
+
     prepareDir();
 
     for (pugi::xml_node tetmesh_node : scene_node.children("BindTetMesh")) {
@@ -103,6 +107,8 @@ void Lobo::LoboDynamicScene::runXMLscript(pugi::xml_node &scene_node) {
                 dynamic_solver = new Lobo::GraspFingerSimulator(this);
             }
         }
+
+        
 
         if (dynamic_solver != NULL) {
             dynamic_solver->runXMLscript(solver_node);

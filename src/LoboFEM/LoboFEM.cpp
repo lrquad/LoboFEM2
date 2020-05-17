@@ -92,6 +92,12 @@ void Lobo::LoboFEM::windowLoop(GLFWwindow *window)
     //update scene before rendering
     scene->collision_world.doDetection();
     dynamic_scene->update();
+    
+    if(dynamic_scene->getDone())
+    {
+        std::cout<<"should close" <<std::endl;
+        glfwSetWindowShouldClose(window,1);
+    }
 
     ImGui::NewFrame();
     drawImGui();
@@ -374,6 +380,7 @@ void Lobo::LoboFEM::loadXMLfile(const char *filename)
         pugi::xml_node scene_node = xml_doc.child("Scene").child("LoboDynamicScene");
         dynamic_scene->runXMLscript(scene_node);
     }
+
     dynamic_scene->initialGL();
 
     std::cout << "Finished." << std::endl;

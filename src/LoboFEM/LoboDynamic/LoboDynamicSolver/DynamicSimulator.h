@@ -43,5 +43,7 @@ public:
     int target_tetmesh_id;
     LoboTetMesh *bind_tetMesh;
     int skipsteps;
+    int max_simulation_steps;
+
 };
 } // namespace Lobo
