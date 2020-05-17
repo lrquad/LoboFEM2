@@ -95,7 +95,9 @@ void Lobo::LoboDynamicScene::runXMLscript(pugi::xml_node &scene_node) {
                 dynamic_solver = new Lobo::ReducedSimulator(this);
             } else if (strcmp(solver_node.attribute("type").as_string(),
                               "GraspSimulator") == 0) {
+                
                 dynamic_solver = new Lobo::GraspSimulator(this);
+
             } else if (strcmp(solver_node.attribute("type").as_string(),
                               "GraspFingerSimulator") == 0) {
                 dynamic_solver = new Lobo::GraspFingerSimulator(this);

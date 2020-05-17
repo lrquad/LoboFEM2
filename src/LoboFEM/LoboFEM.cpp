@@ -269,9 +269,11 @@ void Lobo::LoboFEM::showMainWindow(ImGui::FileBrowser *fileDialog, bool *p_open)
 
     if (fileDialog->HasSelected())
     {
-        //config_file_path = fileDialog->GetSelected().string();
+        config_file_path = fileDialog->GetSelected().string();
         fileDialog->ClearSelected();
+        
         this->loadXMLfile(config_file_path.c_str());
+
     }
 
     ImGuiIO &io = ImGui::GetIO();
